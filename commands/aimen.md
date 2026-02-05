@@ -1,5 +1,5 @@
 ---
-description: AIMEN工作流主协调器，负责调度agents和项目状态管理
+description: 使用AIMEN，开始愉快的SDD开发之旅吧~Meow~
 ---
 
 # AIMEN

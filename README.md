@@ -1,6 +1,3 @@
----
-description: 使用AIMEN，开始愉快的SDD开发之旅吧~Meow~
----
 # AIMEN - AI-driven Development Workflow System
 
 基于Claude Code的智能开发工作流系统，使用agent架构管理项目生命周期。
