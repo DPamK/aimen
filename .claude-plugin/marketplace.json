@@ -1,0 +1,28 @@
+{
+  "name": "aimen",
+  "owner": {
+    "name": "Dpamk"
+  },
+  "plugins": [
+    {
+      "name": "aimen",
+      "source": ".",
+      "description": "基于Claude Code的智能开发工作流系统，使用agent架构管理项目生命周期",
+      "commands": [
+        "./commands/aimen.md"
+      ],
+      "agents": [
+        "./agents/agent-constitution.md",
+        "./agents/agent-specify.md",
+        "./agents/agent-clarify.md",
+        "./agents/agent-plan.md",
+        "./agents/agent-tasks.md",
+        "./agents/agent-analyze.md",
+        "./agents/agent-implement.md"
+      ],
+      "skills": [
+        "./skills/project-manager"
+      ]
+    }
+  ]
+}
