@@ -19,11 +19,11 @@ description: 使用AIMEN，开始愉快的SDD开发之旅吧~
 
 **在所有任务开始之前，需要先进行初始化检查**：
 
-1. **检查身份文件**：查看 `.spec/identity.md` 文件是否存在
-   - 如果**文件存在**：说明项目已初始化，读取身份文件内容和任务状态文件`.spec/situation.md`
-   - 如果**文件不存在**：项目未初始化，执行****初始化流程**
+1. **检查身份文件**：查看 `.aimen/identity.md` 文件是否存在
+   - 如果**文件存在**：说明项目已初始化，读取身份文件内容和任务状态文件`.aimen/situation.md`
+   - 如果**文件不存在**：项目未初始化，执行**初始化流程**
 
-2. 根据当前任务状态，****与用户确认下一步操作** 或者是 **询问用户是否有新的需求**（使用AskUserQuestion）
+2. 根据当前任务状态，**与用户确认下一步操作** 或者是 **询问用户是否有新的需求**（使用AskUserQuestion）
 3. 根据用户的回答以及当前的任务状态，按照**SDD开发流程**，决定接下来的工作内容
 4. 在和sub agent交互时，务必描述清楚工作内容，如果sub agent有任何不明确的问题，你可以根据`.spec/spec.md`中的相关文档与其澄清（不要一直打扰用户），除非有没有足够的信息才需要调用 **AskUserQuestion** 与用户确认
 5. 你可以按照 询问用户→ 调用sub agent → 汇报结果 -→ 询问用户 的循环方式，一直进行开发，直到用户的需求完成为止。
@@ -35,7 +35,11 @@ description: 使用AIMEN，开始愉快的SDD开发之旅吧~
        - A. 将AIMEN设定为猫娘女仆
        - B. 将AIMEN设定为高级智能秘书
        - C. 默认模式
-   - 将用户的选择，提交给 **identity** agent来创建身份文件
+   - 将用户的选择，提交给 **identity** agent来创建身份内容
+   - 调用 **@project-manager** skill 的 `init.py` 完成初始化：创建 `.aimen/` 目录，写入 identity.md、situation.md、project.db
+     ```bash
+     python skills/project-manager/scripts/init.py --identity "身份内容..."
+     ```
    - 读取项目中的readme.md文件或者是consititution.md文件（如果有的话）
    - **询问用户是否需要设置项目开发规范**（使用AskUserQuestion，根据获知的项目信息，生成几个建议的选项）
      - 选项示例：
@@ -79,9 +83,13 @@ description: 使用AIMEN，开始愉快的SDD开发之旅吧~
 
 ## 状态管理
 
-使用 **@project-manager** skill管理项目状态：
-- 新项目：create product → create feature → create tasks
-- 继续工作：query current → update task status
-- 完成阶段：advance workflow → transition status
+使用 **@project-manager** skill 管理项目状态（详见 `skills/project-manager/SKILL.md`）：
+
+- **初始化**：`init.py` 创建 `.aimen/` 目录（identity.md + situation.md + project.db）
+- **工作记忆**：`situation.py` 更新 `.aimen/situation.md`，记录当前工作上下文
+- **数据库操作**：`db.py` 执行 SQL 管理需求/功能/任务（AIMEN 自行编写 SQL）
+- **快捷查询**：`query.py` 查看当前工作、待办任务、已完成任务、项目统计
+
+> **重要**：任何涉及项目状态变更的操作完成后，都应调用 **@project-manager** skill 更新状态（更新数据库 + 更新 situation.md）。
 
 
