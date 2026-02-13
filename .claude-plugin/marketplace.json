@@ -6,7 +6,10 @@
   "plugins": [
     {
       "name": "aimen",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "DPamK/aimen"
+      },
       "description": "基于Claude Code的智能开发工作流系统，使用agent架构管理项目生命周期",
       "commands": [
         "./commands/aimen.md"
