@@ -201,8 +201,8 @@ Additional [N] lower-priority findings grouped by category:
 
 ## Traceability
 
-### Requirement Coverage
-- Total requirements: [N]
+### Project Coverage
+- Total project: [N]
 - Covered by tasks: [N]
 - Coverage gap: [N]
 
@@ -235,7 +235,7 @@ spec.md should include: "API responses must return <100ms p95 latency"
 1. Open spec.md
 2. Find "Performance" section
 3. Add: "API response time: <100ms p95 latency (measured from client request to response received)"
-4. Add corresponding non-functional requirement
+4. Add corresponding non-functional project specification
 
 **Verification**:
 - Check that "100ms" is referenced in spec.md

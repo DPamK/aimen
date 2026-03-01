@@ -45,16 +45,16 @@ def get_constitution_template():
 <!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
 ## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+<!-- Example: Additional Constraints, Security projects, Performance Standards, etc. -->
 
 [SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+<!-- Example: Technology stack projects, compliance standards, deployment policies, etc. -->
 
 ## [SECTION_3_NAME]
 <!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
 
 [SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+<!-- Example: Code review projects, testing gates, deployment approval process, etc. -->
 
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
@@ -77,9 +77,12 @@ def get_situation_template():
 
 ## 当前执行
 
-- **需求**：(无)
+- **项目**：(无)
+- **项目 ID**：
 - **功能**：(无)
+- **功能 ID**：
 - **开发任务**：(无)
+- **任务 ID**：
 - **执行状态**：空闲
 - **更新时间**：{now}
 
@@ -92,10 +95,10 @@ def get_situation_template():
 def init_database(db_path):
     """Create the SQLite database with schema."""
     conn = sqlite3.connect(str(db_path))
-    cursor = conn.cursor()
-
-    cursor.executescript("""
-        CREATE TABLE IF NOT EXISTS requirements (
+    try:
+        cursor = conn.cursor()
+        cursor.executescript("""
+        CREATE TABLE IF NOT EXISTS project (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             description TEXT,
@@ -107,7 +110,7 @@ def init_database(db_path):
 
         CREATE TABLE IF NOT EXISTS features (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            requirement_id INTEGER NOT NULL,
+            project_id INTEGER NOT NULL,
             name TEXT NOT NULL,
             description TEXT,
             branch TEXT,
@@ -116,7 +119,7 @@ def init_database(db_path):
             priority TEXT DEFAULT 'medium',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (requirement_id) REFERENCES requirements(id)
+            FOREIGN KEY (project_id) REFERENCES project(id)
         );
 
         CREATE TABLE IF NOT EXISTS tasks (
@@ -144,10 +147,31 @@ def init_database(db_path):
             new_value TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-    """)
 
-    conn.commit()
-    conn.close()
+        CREATE TRIGGER IF NOT EXISTS trg_project_updated_at
+        AFTER UPDATE ON project FOR EACH ROW
+        WHEN OLD.updated_at = NEW.updated_at
+        BEGIN
+            UPDATE project SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS trg_features_updated_at
+        AFTER UPDATE ON features FOR EACH ROW
+        WHEN OLD.updated_at = NEW.updated_at
+        BEGIN
+            UPDATE features SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+        END;
+
+        CREATE TRIGGER IF NOT EXISTS trg_tasks_updated_at
+        AFTER UPDATE ON tasks FOR EACH ROW
+        WHEN OLD.updated_at = NEW.updated_at
+        BEGIN
+            UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+        END;
+    """)
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def init_project(identity_content=None):
@@ -173,7 +197,9 @@ def init_project(identity_content=None):
     constitution_path = AIMEN_DIR / "constitution.md"
     if not constitution_path.exists():
         now = datetime.now().strftime("%Y-%m-%d")
-        constitution_content = get_constitution_template().replace("{{DATE}}", now)
+        constitution_content = (get_constitution_template()
+                                .replace("[RATIFICATION_DATE]", now)
+                                .replace("[LAST_AMENDED_DATE]", now))
         constitution_path.write_text(constitution_content, encoding="utf-8")
         results.append(f"Created {constitution_path}")
     else:

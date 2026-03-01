@@ -17,6 +17,7 @@ def execute_sql(sql, params=None):
         return {"success": False, "error": f"Database not found at {DB_PATH}. Run init.py first."}
 
     conn = sqlite3.connect(str(DB_PATH))
+    conn.execute("PRAGMA foreign_keys = ON")
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -44,12 +45,13 @@ def execute_sql(sql, params=None):
             result["last_id"] = cursor.lastrowid
             result["message"] = f"Statement executed, {cursor.rowcount} row(s) affected"
 
-        conn.close()
         return result
 
     except Exception as e:
-        conn.close()
+        conn.rollback()
         return {"success": False, "error": str(e), "sql": sql}
+    finally:
+        conn.close()
 
 
 def execute_script(sql_script):
@@ -58,13 +60,14 @@ def execute_script(sql_script):
         return {"success": False, "error": f"Database not found at {DB_PATH}. Run init.py first."}
 
     conn = sqlite3.connect(str(DB_PATH))
+    conn.execute("PRAGMA foreign_keys = ON")
     try:
         conn.executescript(sql_script)
-        conn.close()
         return {"success": True, "message": "Script executed successfully"}
     except Exception as e:
-        conn.close()
         return {"success": False, "error": str(e)}
+    finally:
+        conn.close()
 
 
 def show_schema():

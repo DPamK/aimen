@@ -1,5 +1,4 @@
-﻿```skill
----
+﻿---
 name: project-manager
 description: AIMEN 项目管理技能包，用于初始化项目环境（.aimen 目录）、管理工作状态和项目数据库。
 ---
@@ -20,10 +19,23 @@ description: AIMEN 项目管理技能包，用于初始化项目环境（.aimen 
  project.db        # 项目管理数据库（SQLite）
 ```
 
+**situation.md 格式（含 ID 字段）**：
+```markdown
+## 当前执行
+- **项目**：用户管理系统
+- **项目 ID**：1
+- **功能**：用户注册
+- **功能 ID**：2
+- **开发任务**：实现注册表单验证
+- **任务 ID**：5
+- **执行状态**：green - 编写实现代码
+- **更新时间**：2026-02-28 10:00:00
+```
+
 ## 核心概念
 
 **三层管理结构**：
-- **Requirement（需求）**：最高层级，如"用户管理系统"
+- **Project（项目）**：最高层级，如"用户管理系统"
 - **Feature（功能）**：中间层级，如"用户注册"、"密码重置"
 - **Task（任务）**：最小执行单元，遵循 TDD 流程开发
 
@@ -84,14 +96,17 @@ python skills/project-manager/scripts/situation.py show
 
 # 更新状态（可只更新部分字段，未指定的字段保持不变）
 python skills/project-manager/scripts/situation.py update \
-  --requirement "用户管理系统" \
+  --project "用户管理系统" \
+  --project-id 1 \
   --feature "用户注册功能" \
+  --feature-id 2 \
   --task "实现注册表单验证" \
+  --task-id 5 \
   --status "green - 编写实现代码" \
   --note "测试已编写并确认失败，开始实现"
 
 # 只更新任务和状态
-python skills/project-manager/scripts/situation.py update --task "编写单元测试" --status "write_test"
+python skills/project-manager/scripts/situation.py update --task "编写单元测试" --task-id 5 --status "write_test"
 
 # 重置为空闲状态
 python skills/project-manager/scripts/situation.py clear
@@ -108,11 +123,11 @@ python skills/project-manager/scripts/situation.py clear
 ```bash
 # 查询数据
 python skills/project-manager/scripts/db.py exec \
-  --sql "SELECT * FROM requirements"
+  --sql "SELECT * FROM project"
 
 # 参数化插入（防注入）
 python skills/project-manager/scripts/db.py exec \
-  --sql "INSERT INTO requirements(name, description, priority) VALUES(?, ?, ?)" \
+  --sql "INSERT INTO project(name, description, priority) VALUES(?, ?, ?)" \
   --params '["用户管理系统", "用户注册登录权限管理", "high"]'
 
 # 更新数据
@@ -137,7 +152,7 @@ python skills/project-manager/scripts/db.py schema
 常用查询的快捷封装，避免每次手写 SQL。
 
 ```bash
-# 查看当前正在执行的工作（TDD 进行中的任务 + 活跃功能）
+# 查看当前正在执行的工作（TDD 进行中的任务（含 blocked） + 活跃功能）
 python skills/project-manager/scripts/query.py current
 
 # 查看待执行的任务（todo 状态，按优先级排序，默认 10 条）
@@ -154,24 +169,24 @@ python skills/project-manager/scripts/query.py overview
 
 ## 数据库结构
 
-### requirements（需求）
+### project（项目）
 
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | id | INTEGER | 自增主键 | |
-| name | TEXT |  | 需求名称（必填） |
-| description | TEXT | NULL | 需求描述 |
+| name | TEXT |  | 项目名称（必填） |
+| description | TEXT | NULL | 项目描述 |
 | status | TEXT | 'active' | active / paused / completed / archived |
 | priority | TEXT | 'medium' | low / medium / high / critical |
 | created_at | TIMESTAMP | 当前时间 | 创建时间 |
-| updated_at | TIMESTAMP | 当前时间 | 更新时间 |
+| updated_at | TIMESTAMP | 当前时间 | 更新时间（UPDATE 时自动更新，无需手写） |
 
 ### features（功能）
 
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | id | INTEGER | 自增主键 | |
-| requirement_id | INTEGER |  | 关联需求 ID（必填，外键） |
+| project_id | INTEGER |  | 关联项目 ID（必填，外键） |
 | name | TEXT |  | 功能名称（必填） |
 | description | TEXT | NULL | 功能描述 |
 | branch | TEXT | NULL | Git 分支名 |
@@ -179,7 +194,7 @@ python skills/project-manager/scripts/query.py overview
 | workflow_stage | TEXT | 'specify' | SDD 阶段：specify / clarify / plan / tasks / analyze / implement |
 | priority | TEXT | 'medium' | low / medium / high / critical |
 | created_at | TIMESTAMP | 当前时间 | 创建时间 |
-| updated_at | TIMESTAMP | 当前时间 | 更新时间 |
+| updated_at | TIMESTAMP | 当前时间 | 更新时间（UPDATE 时自动更新，无需手写） |
 
 ### tasks（任务） TDD 驱动
 
@@ -195,7 +210,7 @@ python skills/project-manager/scripts/query.py overview
 | tdd_stage | TEXT | NULL | 可选的 TDD 阶段备注（如失败原因、重构要点等） |
 | priority | TEXT | 'medium' | low / medium / high / critical |
 | created_at | TIMESTAMP | 当前时间 | 创建时间 |
-| updated_at | TIMESTAMP | 当前时间 | 更新时间 |
+| updated_at | TIMESTAMP | 当前时间 | 更新时间（UPDATE 时自动更新，无需手写） |
 | completed_at | TIMESTAMP | NULL | 完成时间（status 变为 done 时设置） |
 
 ### changelog（变更日志）
@@ -203,7 +218,7 @@ python skills/project-manager/scripts/query.py overview
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | id | INTEGER | 自增主键 | |
-| entity_type | TEXT |  | requirement / feature / task |
+| entity_type | TEXT |  | project / feature / task |
 | entity_id | INTEGER |  | 对应实体的 ID |
 | field | TEXT |  | 变更的字段名 |
 | old_value | TEXT | NULL | 旧值 |
@@ -255,15 +270,15 @@ VALUES('task', 1, 'status', 'red', 'green');
 
 ## 其他常用 SQL 示例
 
-### 创建需求
+### 创建项目
 ```sql
-INSERT INTO requirements(name, description, priority)
+INSERT INTO project(name, description, priority)
 VALUES('用户管理系统', '用户注册、登录、权限管理', 'high');
 ```
 
 ### 创建功能
 ```sql
-INSERT INTO features(requirement_id, name, description, branch)
+INSERT INTO features(project_id, name, description, branch)
 VALUES(1, '用户注册', '实现完整的用户注册流程', '001-user-register');
 ```
 
@@ -280,22 +295,22 @@ FROM tasks t WHERE t.feature_id = 1 ORDER BY t.id;
 
 ### 查询项目整体进度
 ```sql
-SELECT r.name AS requirement, f.name AS feature, f.workflow_stage,
+SELECT p.name AS project, f.name AS feature, f.workflow_stage,
        COUNT(CASE WHEN t.status='done' THEN 1 END) AS done,
        COUNT(CASE WHEN t.status IN ('write_test','red','green','refactor') THEN 1 END) AS doing,
        COUNT(CASE WHEN t.status='todo' THEN 1 END) AS todo,
        COUNT(t.id) AS total
-FROM requirements r
-JOIN features f ON f.requirement_id = r.id
+FROM project p
+JOIN features f ON f.project_id = p.id
 LEFT JOIN tasks t ON t.feature_id = f.id
-GROUP BY r.id, f.id;
+GROUP BY p.id, f.id;
 ```
 
 ### 最近变更历史
 ```sql
 SELECT c.*,
   CASE c.entity_type
-    WHEN 'requirement' THEN (SELECT name FROM requirements WHERE id=c.entity_id)
+    WHEN 'project' THEN (SELECT name FROM project WHERE id=c.entity_id)
     WHEN 'feature' THEN (SELECT name FROM features WHERE id=c.entity_id)
     WHEN 'task' THEN (SELECT title FROM tasks WHERE id=c.entity_id)
   END AS entity_name
@@ -309,11 +324,11 @@ FROM changelog c ORDER BY c.created_at DESC LIMIT 20;
 ### 新项目初始化
 1. 执行 `init.py --identity "..."` 创建 `.aimen/` 目录（含 constitution.md）
 2. 根据需要修改 `.aimen/constitution.md` 调整项目规范
-3. 用 `db.py` 创建第一个 requirement
+3. 用 `db.py` 创建第一个 project
 4. 用 `situation.py update` 记录当前工作上下文
 
 ### 开始新需求
-1. `db.py exec` 插入 requirement  feature  tasks（指定 file_path 和 test_file）
+1. `db.py exec` 插入 project  feature  tasks（指定 file_path 和 test_file）
 2. `situation.py update` 更新当前工作状态
 3. 按 SDD 流程推进 workflow_stage
 
@@ -340,8 +355,9 @@ FROM changelog c ORDER BY c.created_at DESC LIMIT 20;
 
 1. **所有脚本输出 JSON 格式**，便于 AIMEN 解析
 2. **数据库操作通过 `db.py`**，AIMEN 自行编写 SQL，灵活高效
-3. **situation.md 是工作记忆**，每次任务切换 / TDD 阶段变更时应更新
-4. **Task 必须遵循 TDD 流程**：write_test  red  green  refactor  done
+3. **situation.md 是工作记忆**，每次任务切换 / TDD 阶段变更时应更新；包含 ID 字段确保与 DB 精确关联
+4. **Task 必须遵循 TDD 流程**：write_test → red → green → refactor → done
 5. **建议写入 changelog**，便于追踪变更历史
 6. **从项目根目录执行**所有脚本命令
-```
+7. **updated_at 由触发器自动维护**，SQL UPDATE 时无需手写 `updated_at=CURRENT_TIMESTAMP`（但手写也不影响）
+8. **外键约束已开启**，每次连接数据库时自动执行 `PRAGMA foreign_keys = ON`

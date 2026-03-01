@@ -79,7 +79,7 @@ model: sonnet
 - Fields: [list with types and constraints]
 - Primary Key: [identifier]
 - Relationships: [references to other entities]
-- Validation Rules: [from requirements]
+- Validation Rules: [from project]
 - State Transitions: [if applicable]
 ```
 
