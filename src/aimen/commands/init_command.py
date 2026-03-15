@@ -11,10 +11,10 @@ def execute(args):
     print_aimen_logo()
     
     # Interactive tool selection
-    tool = select_tool_interactive()
+    tool = select_tool_interactive(args)
     
     if not tool:
-        print("Error: No tool selected.")
+        print("\nCancelled.")
         return
     
     print(f"\n🚀 Initializing AIMEN project with {tool}...")
@@ -34,37 +34,44 @@ def execute(args):
 
 def print_aimen_logo():
     """Print AIMEN logo."""
-    logo = """
-╔══════════════════════════════════════════╗
-║                                          ║
-║   ███╗   A██I██M██E██N██ ███╗            ║
-║   ███║   AI-driven Development   ███║            ║
-║   ███║   Workflow System         ███║            ║
-║                                          ║
-╚══════════════════════════════════════════╝
-    """
+    CYAN = "\033[36m"
+    YELLOW = "\033[33m"
+    RESET = "\033[0m"
+    logo = f"""
+{CYAN} █████╗ ██╗███╗   ███╗███████╗███╗   ██╗
+██╔══██╗██║████╗ ████║██╔════╝████╗  ██║
+███████║██║██╔████╔██║█████╗  ██╔██╗ ██║
+██╔══██║██║██║╚██╔╝██║██╔══╝  ██║╚██╗██║
+██║  ██║██║██║ ╚═╝ ██║███████╗██║ ╚████║
+╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝{RESET}
+{YELLOW}      AI-driven Development Workflow{RESET}
+"""
     print(logo)
 
 
-def select_tool_interactive() -> str:
-    """Interactive tool selection."""
-    print("\n🤖 Select AI Tool:")
-    print("  1. Claude Code")
-    print("  2. GitHub Copilot")
-    print()
-    
-    try:
-        while True:
-            choice = input("Enter choice (1-2): ").strip()
-            if choice == "1":
-                return "claude"
-            elif choice == "2":
-                return "github"
-            else:
-                print("Invalid choice. Please enter 1 or 2.")
-    except EOFError:
-        print("\nError: No input provided. Please run interactively.")
-        return None
+def select_tool_interactive(args) -> str:
+    """Select AI agent - use args.agent if set, otherwise interactive arrow-key menu."""
+    if getattr(args, "agent", None):
+        return args.agent
+
+    options = [
+        ("claude", "Claude Code"),
+        ("cursor", "Cursor"),
+        ("github-copilot", "GitHub Copilot"),
+        ("gemini", "Gemini"),
+        ("qwen", "Qwen"),
+    ]
+    return _arrow_select("🤖 Select AI Agent", options)
+
+
+def _arrow_select(title: str, options: list) -> str:
+    """Display an arrow-key navigable menu and return the selected value."""
+    import questionary
+
+    choices = [questionary.Choice(label, value=value) for value, label in options]
+    result = questionary.select(title, choices=choices).ask()
+    return result  # None if ESC / Ctrl-C
+
 
 
 def setup_claude_code():

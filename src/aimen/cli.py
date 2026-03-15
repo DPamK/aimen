@@ -9,13 +9,18 @@ def create_parser() -> argparse.ArgumentParser:
     """Create the argument parser for aimen CLI."""
     parser = argparse.ArgumentParser(
         prog="aimen",
-        description="AIMEN - AI-driven Development Workflow System",
+        description="AIMEN - AI-driven Development Workflow",
     )
 
     subparsers = parser.add_subparsers(dest="command", metavar="<command>")
 
     # init command
     init_parser = subparsers.add_parser("init", help="Initialize a new AIMEN project")
+    init_parser.add_argument(
+        "--agent",
+        choices=["claude", "cursor", "github-copilot", "gemini", "qwen" ],
+        help="AI agent to use (default: claude)",
+    )
 
     # program command
     program_parser = subparsers.add_parser("program", help="Project management tool")
@@ -27,33 +32,33 @@ def create_parser() -> argparse.ArgumentParser:
     prog_init.add_argument("-t", "--text", required=True, help="Project description")
 
     # program add
-    prog_add = program_subparsers.add_parser("add", help="Add a new requirement")
+    prog_add = program_subparsers.add_parser("add", help="Add a new task")
     prog_add.add_argument("project_id", help="Project ID")
-    prog_add.add_argument("-n", "--name", required=True, help="Requirement name")
-    prog_add.add_argument("-t", "--text", required=True, help="Requirement description")
+    prog_add.add_argument("-n", "--name", required=True, help="Task name")
+    prog_add.add_argument("-t", "--text", required=True, help="Task description")
     prog_add.add_argument("-c", "--criteria", required=True, help="Acceptance criteria")
 
     # program remove
-    prog_remove = program_subparsers.add_parser("remove", help="Remove project or requirement")
+    prog_remove = program_subparsers.add_parser("remove", help="Remove project or task")
     prog_remove.add_argument("project_id", help="Project ID")
-    prog_remove.add_argument("requirement_id", nargs="?", help="Requirement ID (optional)")
+    prog_remove.add_argument("task_id", nargs="?", help="Task ID (optional)")
 
     # program status
     prog_status = program_subparsers.add_parser("status", help="Show project status")
     prog_status.add_argument("project_id", nargs="?", help="Project ID (optional)")
-    prog_status.add_argument("requirement_id", nargs="?", help="Requirement ID (optional)")
+    prog_status.add_argument("task_id", nargs="?", help="Task ID (optional)")
 
     # program orch
     prog_orch = program_subparsers.add_parser("orch", help="Set project orchestration")
     prog_orch.add_argument("project_id", help="Project ID")
     prog_orch.add_argument("orchestration", help="Orchestration text")
 
-    return parser
+    return parser, program_parser
 
 
 def main():
     """Main entry point for aimen CLI."""
-    parser = create_parser()
+    parser, program_parser = create_parser()
     args = parser.parse_args()
 
     if not args.command:

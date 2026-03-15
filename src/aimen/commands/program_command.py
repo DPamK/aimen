@@ -15,9 +15,9 @@ def execute(args):
     elif subcommand == "add":
         cmd_add(args.project_id, args.name, args.text, args.criteria)
     elif subcommand == "remove":
-        cmd_remove(args.project_id, args.requirement_id)
+        cmd_remove(args.project_id, args.task_id)
     elif subcommand == "status":
-        cmd_status(args.project_id, args.requirement_id)
+        cmd_status(args.project_id, args.task_id)
     elif subcommand == "orch":
         cmd_orch(args.project_id, args.orchestration)
     else:
@@ -35,7 +35,7 @@ def cmd_init(project_name: str, description: str):
 
 
 def cmd_add(project_id: str, name: str, description: str, criteria: str):
-    """Add a new requirement."""
+    """Add a new task."""
     # Verify program exists
     program = get_program(project_id)
     if not program:
@@ -43,22 +43,22 @@ def cmd_add(project_id: str, name: str, description: str, criteria: str):
         return
     
     task_id = create_task(project_id, name, description, criteria)
-    print(f"✅ Requirement added!")
+    print(f"✅ Task added!")
     print(f"   ID: {task_id}")
     print(f"   Name: {name}")
     print(f"   Status: ⚪")
 
 
-def cmd_remove(project_id: str, requirement_id: str = None):
-    """Remove project or requirement."""
-    if requirement_id:
-        # Remove requirement
-        task = get_task(requirement_id)
+def cmd_remove(project_id: str, task_id: str = None):
+    """Remove project or task."""
+    if task_id:
+        # Remove task
+        task = get_task(task_id)
         if not task:
-            print(f"❌ Requirement {requirement_id} not found.")
+            print(f"❌ Task {task_id} not found.")
             return
-        delete_task(requirement_id)
-        print(f"✅ Requirement {requirement_id} removed.")
+        delete_task(task_id)
+        print(f"✅ Task {task_id} removed.")
     else:
         # Remove project
         program = get_program(project_id)
@@ -66,19 +66,19 @@ def cmd_remove(project_id: str, requirement_id: str = None):
             print(f"❌ Project {project_id} not found.")
             return
         delete_program(project_id)
-        print(f"✅ Project {project_id} and all requirements removed.")
+        print(f"✅ Project {project_id} and all tasks removed.")
 
 
-def cmd_status(project_id: str = None, requirement_id: str = None):
+def cmd_status(project_id: str = None, task_id: str = None):
     """Show project status."""
-    if requirement_id and project_id:
-        # Show specific requirement
-        task = get_task(requirement_id)
+    if task_id and project_id:
+        # Show specific task
+        task = get_task(task_id)
         if not task:
-            print(f"❌ Requirement {requirement_id} not found.")
+            print(f"❌ Task {task_id} not found.")
             return
         
-        print(f"\n📋 Requirement: {task['name']}")
+        print(f"\n📋 Task: {task['name']}")
         print(f"   ID: {task['id']}")
         print(f"   Status: {task['status']}")
         print(f"   Description: {task['description']}")
@@ -89,7 +89,7 @@ def cmd_status(project_id: str = None, requirement_id: str = None):
             print(f"   Notes: {task['notes']}")
     
     elif project_id:
-        # Show all requirements for a project
+        # Show all tasks for a project
         program = get_program(project_id)
         if not program:
             print(f"❌ Project {project_id} not found.")
@@ -103,11 +103,11 @@ def cmd_status(project_id: str = None, requirement_id: str = None):
         
         tasks = get_tasks_by_program(project_id)
         if tasks:
-            print(f"\n   Requirements ({len(tasks)}):")
+            print(f"\n   Tasks ({len(tasks)}):")
             for task in tasks:
                 print(f"   - [{task['status']}] {task['id']}: {task['name']}")
         else:
-            print("\n   No requirements yet.")
+            print("\n   No tasks yet.")
     
     else:
         # Show all projects
@@ -123,7 +123,7 @@ def cmd_status(project_id: str = None, requirement_id: str = None):
             total = len(tasks)
             print(f"\n   [{prog['status']}] {prog['id']}: {prog['name']}")
             print(f"       Description: {prog['description']}")
-            print(f"       Progress: {completed}/{total} requirements completed")
+            print(f"       Progress: {completed}/{total} tasks completed")
             if prog['orchestration']:
                 print(f"       Orchestration: {prog['orchestration']}")
 
