@@ -71,6 +71,10 @@ def cmd_remove(project_id: str, task_id: str = None):
 
 def cmd_status(project_id: str = None, task_id: str = None):
     """Show project status."""
+    # Allow querying a task directly by its ID (T- prefix) without project_id
+    if project_id and project_id.startswith("T-") and not task_id:
+        task_id, project_id = project_id, None
+
     if task_id and project_id:
         # Show specific task
         task = get_task(task_id)
