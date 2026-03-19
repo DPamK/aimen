@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from .commands import init_command, program_command
+from .commands import init_command, program_command, memory_command
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -53,12 +53,19 @@ def create_parser() -> argparse.ArgumentParser:
     prog_orch.add_argument("project_id", help="Project ID")
     prog_orch.add_argument("orchestration", help="Orchestration text")
 
-    return parser, program_parser
+    # memory command
+    memory_parser = subparsers.add_parser("memory", help="Memory and identity management")
+    memory_subparsers = memory_parser.add_subparsers(dest="subcommand", metavar="<subcommand>")
+
+    # memory init
+    memory_subparsers.add_parser("init", help="Initialize memory structure")
+
+    return parser, program_parser, memory_parser
 
 
 def main():
     """Main entry point for aimen CLI."""
-    parser, program_parser = create_parser()
+    parser, program_parser, memory_parser = create_parser()
     args = parser.parse_args()
 
     if not args.command:
@@ -73,6 +80,11 @@ def main():
                 program_parser.print_help()
                 sys.exit(0)
             program_command.execute(args)
+        elif args.command == "memory":
+            if not args.subcommand:
+                memory_parser.print_help()
+                sys.exit(0)
+            memory_command.execute(args)
         else:
             parser.print_help()
             sys.exit(1)
