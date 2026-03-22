@@ -1,5 +1,5 @@
 ---
-name: reviewer
+name: debuger
 description: 这是一个专门修复bug的程序猿，会对有问题的业务代码进行修复。
 ---
 

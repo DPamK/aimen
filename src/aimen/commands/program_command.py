@@ -5,11 +5,15 @@ from ..database import (
     create_task, get_task, get_tasks_by_program, update_task, delete_task
 )
 
+# Status presets
+PROGRAM_STATUS_OPTIONS = ["未开发", "开发中", "已完成"]
+TASK_STATUS_OPTIONS = ["⚪", "🟢", "🔴", "🟡"]
+
 
 def execute(args):
     """Execute the program command."""
     subcommand = args.subcommand
-    
+
     if subcommand == "init":
         cmd_init(args.project_name, args.text)
     elif subcommand == "add":
@@ -20,6 +24,11 @@ def execute(args):
         cmd_status(args.project_id, args.task_id)
     elif subcommand == "orch":
         cmd_orch(args.project_id, args.orchestration)
+    elif subcommand == "update":
+        cmd_update(
+            args.id, args.name, args.description, args.status,
+            args.notes, args.criteria, args.script, args.orchestration
+        )
     else:
         print("Unknown subcommand. Use 'aimen program --help' for usage.")
 
@@ -138,7 +147,85 @@ def cmd_orch(project_id: str, orchestration: str):
     if not program:
         print(f"❌ Project {project_id} not found.")
         return
-    
+
     update_program(project_id, orchestration=orchestration)
     print(f"✅ Orchestration updated for project {project_id}.")
     print(f"   {orchestration}")
+
+
+def cmd_update(id: str, name: str = None, description: str = None, status: str = None,
+               notes: str = None, criteria: str = None, script: str = None, orchestration: str = None):
+    """Update project or task fields."""
+    # Determine if it's a project or task by ID prefix
+    if id.startswith("P-"):
+        # Update project
+        program = get_program(id)
+        if not program:
+            print(f"❌ Project {id} not found.")
+            return
+
+        # Validate status if provided
+        if status and status not in PROGRAM_STATUS_OPTIONS:
+            print(f"❌ Invalid status. Valid options: {', '.join(PROGRAM_STATUS_OPTIONS)}")
+            return
+
+        # Build update fields
+        updates = {}
+        if name:
+            updates["name"] = name
+        if description is not None:
+            updates["description"] = description
+        if status:
+            updates["status"] = status
+        if notes is not None:
+            updates["notes"] = notes
+        if orchestration is not None:
+            updates["orchestration"] = orchestration
+
+        if not updates:
+            print("⚠️ No fields provided to update.")
+            return
+
+        update_program(id, **updates)
+        print(f"✅ Project {id} updated!")
+        for field, value in updates.items():
+            print(f"   {field}: {value}")
+
+    elif id.startswith("T-"):
+        # Update task
+        task = get_task(id)
+        if not task:
+            print(f"❌ Task {id} not found.")
+            return
+
+        # Validate status if provided
+        if status and status not in TASK_STATUS_OPTIONS:
+            print(f"❌ Invalid status. Valid options: {', '.join(TASK_STATUS_OPTIONS)}")
+            return
+
+        # Build update fields
+        updates = {}
+        if name:
+            updates["name"] = name
+        if description is not None:
+            updates["description"] = description
+        if status:
+            updates["status"] = status
+        if notes is not None:
+            updates["notes"] = notes
+        if criteria is not None:
+            updates["acceptance_criteria"] = criteria
+        if script is not None:
+            updates["acceptance_script"] = script
+
+        if not updates:
+            print("⚠️ No fields provided to update.")
+            return
+
+        update_task(id, **updates)
+        print(f"✅ Task {id} updated!")
+        for field, value in updates.items():
+            print(f"   {field}: {value}")
+
+    else:
+        print(f"❌ Invalid ID format. Expected P-xxx or T-xxx, got: {id}")

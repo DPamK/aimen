@@ -53,6 +53,17 @@ def create_parser() -> argparse.ArgumentParser:
     prog_orch.add_argument("project_id", help="Project ID")
     prog_orch.add_argument("orchestration", help="Orchestration text")
 
+    # program update
+    prog_update = program_subparsers.add_parser("update", help="Update project or task")
+    prog_update.add_argument("id", help="Project ID (P-xxx) or Task ID (T-xxx)")
+    prog_update.add_argument("--name", help="New name")
+    prog_update.add_argument("--description", help="New description")
+    prog_update.add_argument("--status", help="New status (project: 未开发/开发中/已完成, task: ⚪/🟢/🔴/🟡)")
+    prog_update.add_argument("--notes", help="Notes")
+    prog_update.add_argument("--criteria", help="Acceptance criteria (task only)")
+    prog_update.add_argument("--script", help="Acceptance script (task only)")
+    prog_update.add_argument("--orchestration", help="Orchestration config (project only)")
+
     # memory command
     memory_parser = subparsers.add_parser("memory", help="Memory and identity management")
     memory_subparsers = memory_parser.add_subparsers(dest="subcommand", metavar="<subcommand>")
