@@ -84,7 +84,7 @@ def cmd_status(project_id: str = None, task_id: str = None):
     if project_id and project_id.startswith("T-") and not task_id:
         task_id, project_id = project_id, None
 
-    if task_id and project_id:
+    if task_id:
         # Show specific task
         task = get_task(task_id)
         if not task:
