@@ -50,7 +50,7 @@ aimen init --agent claude  # Options: claude, cursor, copilot, gemini, qwen
 Use the `cto` command to discuss your feature requirements with an AI architect:
 
 ```bash
-cto "I want to build a user authentication system"
+/cto "I want to build a user authentication system"
 ```
 
 The CTO agent will:
@@ -64,7 +64,7 @@ The CTO agent will:
 Once requirements are defined, use the `aimen` command to start development:
 
 ```bash
-aimen
+/aimen
 ```
 
 The AIMEN agent will:

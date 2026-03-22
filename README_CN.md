@@ -50,7 +50,7 @@ aimen init --agent claude  # 可选: claude, cursor, copilot, gemini, qwen
 使用 `cto` 命令与 AI 架构师讨论你的功能需求：
 
 ```bash
-cto "我想构建一个用户认证系统"
+/cto "我想构建一个用户认证系统"
 ```
 
 CTO 代理会：
@@ -64,7 +64,7 @@ CTO 代理会：
 需求定义完成后，使用 `aimen` 命令开始开发：
 
 ```bash
-aimen
+/aimen
 ```
 
 AIMEN 代理会：
