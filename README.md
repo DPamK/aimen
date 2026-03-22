@@ -22,11 +22,13 @@ That's it. No complex configuration, no steep learning curve.
 ## Installation
 
 ```bash
-# Using uv
-uv sync
+# Install as a global tool
+uv tool install git+https://github.com/DPamK/aimen.git
 
-# Or install in development mode
-uv pip install -e .
+# Or clone and install locally
+git clone https://github.com/DPamK/aimen.git
+cd aimen
+uv tool install .
 ```
 
 ## Quick Start

@@ -22,11 +22,13 @@
 ## 安装
 
 ```bash
-# 使用 uv
-uv sync
+# 安装为全局工具
+uv tool install git+https://github.com/DPamK/aimen.git
 
-# 或开发模式安装
-uv pip install -e .
+# 或克隆后本地安装
+git clone https://github.com/DPamK/aimen.git
+cd aimen
+uv tool install .
 ```
 
 ## 快速开始
