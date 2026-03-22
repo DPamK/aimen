@@ -14,7 +14,8 @@ That's it. No complex configuration, no steep learning curve.
 ## Features
 
 - **Self-hosted** - Full control over your development environment
-- **Multi-agent support** - Works with Claude, Cursor, Copilot, Gemini, Qwen (coming soon)
+- **Claude Code support** - Currently supports Claude Code (more AI agents coming soon)
+- **Two modes** - Dev mode (advanced) and Easy mode (simplified workflow)
 - **TDD workflow** - Built-in test-driven development process
 - **Smart task management** - Automatic project and task tracking
 - **Interactive development** - AI agents communicate with you through guided questions
@@ -39,11 +40,14 @@ uv tool install .
 aimen init
 ```
 
-This command sets up the `.aimen/` directory with all necessary configuration files. You can optionally specify an AI agent:
+This command sets up the `.claude/` directory with all necessary configuration files. You can optionally specify a mode:
 
 ```bash
-aimen init --agent claude  # Options: claude, cursor, copilot, gemini, qwen
+aimen init --mode dev    # Dev mode (default) - full development workflow
+aimen init --mode easy   # Easy mode - simplified workflow with CTO as agent
 ```
+
+> **Note:** Currently only Claude Code is supported. Support for Cursor, Copilot, Gemini, and Qwen is coming soon.
 
 ### 2. Define Requirements with CTO
 
@@ -96,6 +100,20 @@ aimen program orch P-001 "Run tasks in sequence: T-001 -> T-002 -> T-003"
 # Update task status
 aimen program update T-001 --status "🟢"
 ```
+
+## Modes
+
+AIMEN supports two workflow modes:
+
+### Dev Mode
+- CTO is a **command** (`/cto`)
+- You manually invoke CTO for requirements, then `/aimen` for development
+- More control over the workflow
+
+### Easy Mode
+- CTO is an **agent** under AIMEN's coordination
+- AIMEN automatically calls CTO when you have new requirements
+- Simplified workflow, less manual switching
 
 ## Development Workflow
 
