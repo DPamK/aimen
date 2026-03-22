@@ -17,8 +17,13 @@ def create_parser() -> argparse.ArgumentParser:
     # init command
     init_parser = subparsers.add_parser("init", help="Initialize a new AIMEN project")
     init_parser.add_argument(
+        "--mode",
+        choices=["dev", "easy"],
+        help="Work mode (default: dev)",
+    )
+    init_parser.add_argument(
         "--agent",
-        choices=["claude", "cursor", "copilot", "gemini", "qwen" ],
+        choices=["claude", "cursor", "copilot", "gemini", "qwen"],
         help="AI agent to use (default: claude)",
     )
 

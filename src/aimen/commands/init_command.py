@@ -1,8 +1,19 @@
 """AIMEN init command - Initialize a new project."""
 
 import shutil
+import sys
 from pathlib import Path
 from typing import Callable
+
+# Ensure stdout uses UTF-8 on Windows
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8")
+
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files  # type: ignore
+
 from ..database import init_db
 
 
@@ -162,7 +173,11 @@ def _install_template(target_dir: Path, mode: str, handlers: dict[str, SectionHa
 
     handler signature: (src_section_dir: Path, tool_root_dir: Path) -> None
     """
-    template_base = Path(__file__).parent.parent.parent.parent / "template" / mode
+    try:
+        template_base = Path(str(files("aimen.template").joinpath(mode)))
+    except (TypeError, FileNotFoundError):
+        template_base = Path(__file__).parent.parent / "template" / mode
+
     if not template_base.exists():
         print(f"  ⚠️  Warning: Template not found: {template_base}")
         return
