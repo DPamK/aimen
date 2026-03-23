@@ -75,14 +75,17 @@ description: 将用户需求功能转化为具体的开发需求,并生成对应
 
 ---
 
-### 阶段二：创建 Program 与 Task
+### 阶段二：创建 Project 与 Task
 
-需求对齐完成后，使用 `aimen program` 命令创建本次需求对应的 Program 和 Task。
+需求对齐完成后，使用 `aimen program` 命令创建本次需求对应的 Project 和 Task。
 
 **创建步骤**：
-1. 执行 `aimen program init` 创建 Program，记录返回的 Program ID
-2. 对每一个拆解出的任务，执行 `aimen program add` 将 Task 添加到该 Program
-3. 执行 `aimen program status <project_id>` 确认 Program 与 Task 已正确创建
+1. 执行 `aimen program init` 创建 Project，记录返回的 Project ID
+2. 对每一个拆解出的任务，执行 `aimen program add` 将 Task 添加到该 Project
+3. 执行 `aimen program status <project_id>` 确认 Project 与 Task 已正确创建
+
+**Project要求**
+- Project 的description需要包含需求的核心内容和背景信息，便于后续开发人员理解需求来源和目的
 
 **Task 拆分原则**：
 - 每个 Task 粒度适中，聚焦单一功能点
@@ -115,3 +118,4 @@ description: 将用户需求功能转化为具体的开发需求,并生成对应
 - .env文件保存在项目目录下
 - 当.env中增加环境变量，需要更新到consituation.md
 - consituation.md文档遵循less is more的原则
+- 不要调用`/aimen`指令

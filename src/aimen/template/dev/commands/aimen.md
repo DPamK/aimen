@@ -48,7 +48,7 @@ project （未开发/开发中/已完成）：最开始的状态是未开发，�
 
 ### 1. 查看project
 
-所有的需求都已经记录program系统，你需要通过`aimen program status`查看
+所有的需求都已经记录program系统，你需要通过`aimen program status`查看, 如果没有任何未开发的project了，就说明没有需求了，你需要询问用户是否有新的需求，如果有新的需求，就调用`/cto`指令来设计需求，如果没有新的需求，就结束工作
 
 如果用户告知了需要开发的project，那就直接基于用户的指令进行开发，如果未指定，那就选择status中未完成的project（按顺序执行）
 
