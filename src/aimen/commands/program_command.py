@@ -176,12 +176,12 @@ def cmd_status(project_id: str = None, task_id: str = None):
             print(f"❌ Task {task_id} not found.")
             return
 
-        program = get_program(task["program_id"])
+        program = get_program(task["project_id"])
 
         _print_title(f"Task {task['id']}")
         _print_kv("Name", task["name"])
         _print_kv("Status", _format_task_status(task["status"]))
-        _print_kv("Project", f"{task['program_id']}  {program['name']}" if program else task["program_id"])
+        _print_kv("Project", f"{task['project_id']}  {program['name']}" if program else task["project_id"])
         _print_kv("Project Description", program["description"] if program else "-")
         _print_kv("Description", task["description"])
         _print_kv("Acceptance Criteria", task["acceptance_criteria"])

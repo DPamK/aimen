@@ -22,10 +22,10 @@ description: 使用AIMEN，开始愉快的SDD开发之旅
 
 **命令说明**
 
-- `aimen program init <project_name> -t <描述>` — 创建一个新的 Program
-- `aimen program add <project_id> -n <任务名> -t <描述> -c <验收标准>` — 向指定 Program 添加一个 Task
-- `aimen program remove <project_id> [task_id]` — 删除指定 Program 或 Task
-- `aimen program status [project_id] [task_id]` — 查看所有 Program、指定 Program 或指定 Task 的状态
+- `aimen program init <project_name> -t <描述>` — 创建一个新的 Project
+- `aimen program add <project_id> -n <任务名> -t <描述> -c <验收标准>` — 向指定 Project 添加一个 Task
+- `aimen program remove <project_id> [task_id]` — 删除指定 Project 或 Task
+- `aimen program status [project_id] [task_id]` — 查看所有 Project、指定 Project 或指定 Task 的状态
 - `aimen program update <id> [--name <名称>] [--status <状态>] [--description <描述>] [--notes <备注>] [--criteria <验收标准>] [--script <验收脚本>] [--orchestration <编排配置>]` — 更新 Project 或 Task 的字段（根据 ID
    前缀自动识别 P-/T-）
 

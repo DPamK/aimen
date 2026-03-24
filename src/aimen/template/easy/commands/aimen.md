@@ -22,10 +22,10 @@ description: 使用AIMEN，开始愉快的Vibe Coding之旅
 
 **命令说明**
 
-- `aimen program init <project_name> -t <描述>` — 创建一个新的 Program
-- `aimen program add <project_id> -n <任务名> -t <描述> -c <验收标准>` — 向指定 Program 添加一个 Task
-- `aimen program remove <project_id> [task_id]` — 删除指定 Program 或 Task
-- `aimen program status [project_id] [task_id]` — 查看所有 Program、指定 Program 或指定 Task 的状态
+- `aimen program init <project_name> -t <描述>` — 创建一个新的 Project
+- `aimen program add <project_id> -n <任务名> -t <描述> -c <验收标准>` — 向指定 Project 添加一个 Task
+- `aimen program remove <project_id> [task_id]` — 删除指定 Project 或 Task
+- `aimen program status [project_id] [task_id]` — 查看所有 Project、指定 Project 或指定 Task 的状态
 - `aimen program update <id> [--name <名称>] [--status <状态>] [--description <描述>] [--notes <备注>] [--criteria <验收标准>] [--script <验收脚本>] [--orchestration <编排配置>]` — 更新 Project 或 Task 的字段（根据 ID
    前缀自动识别 P-/T-）
 
@@ -40,11 +40,11 @@ description: 使用AIMEN，开始愉快的Vibe Coding之旅
 ### 工作流程
 
 当用户提出新需求时：
-1. 首先使用 **cto** agent 进行需求分析和架构设计，创建 Program 和 Task
+1. 首先使用 **cto** agent 进行需求分析和架构设计，创建 Project 和 Task
 2. cto 完成后，按顺序进行 Task 开发
 3. 每个 Task 的开发流程：先使用 developer 开发功能，然后使用 tester 开发验收脚本
 4. 如果验收通过，Task 完成；如果验收未通过，使用 debuger 修复代码
-5. 所有 Task 完成后，Program 完成
+5. 所有 Task 完成后，Project 完成
 
 **project和task的状态需要你来调整**
 
@@ -72,7 +72,7 @@ project （未开发/开发中/已完成）：最开始的状态是未开发，�
 
 cto 会完成：
 - 需求沟通与对齐
-- 创建 Program 和 Task
+- 创建 Project 和 Task
 - 与用户确认所有 Task
 
 ### 3. 创建/切换开发分支
