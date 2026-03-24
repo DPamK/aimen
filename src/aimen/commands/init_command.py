@@ -109,8 +109,9 @@ def execute(args):
     create_aimen_directory()
 
     gitignore_path = ensure_database_ignored()
-    ensure_git_repository()
-    commit_initialized_files(initialized_files + [gitignore_path])
+    git_initialized = ensure_git_repository()
+    if git_initialized:
+        commit_initialized_files(initialized_files + [gitignore_path])
     
     print(f"Project initialized successfully!")
 
@@ -247,20 +248,21 @@ def ensure_database_ignored() -> Path:
     return gitignore_path
 
 
-def ensure_git_repository() -> None:
-    """Initialize a Git repository when the current project is not already tracked."""
+def ensure_git_repository() -> bool:
+    """Initialize a Git repository when needed and return whether initialization happened."""
     git_dir = Path.cwd() / ".git"
     if git_dir.exists():
-        return
+        return False
 
     if _run_git_command("rev-parse", "--is-inside-work-tree", check=False).returncode == 0:
-        return
+        return False
 
     result = _run_git_command("init", check=False)
     if result.returncode != 0:
         raise RuntimeError(f"Git repository initialization failed: {result.stderr.strip() or result.stdout.strip()}")
 
     print("✅ Git repository initialized")
+    return True
 
 
 def commit_initialized_files(paths: list[Path]) -> None:
