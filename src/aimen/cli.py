@@ -18,7 +18,7 @@ def create_parser() -> argparse.ArgumentParser:
     init_parser = subparsers.add_parser("init", help="Initialize a new AIMEN project")
     init_parser.add_argument(
         "--mode",
-        choices=["dev", "easy"],
+        choices=["dev", "quick"],
         help="Work mode (default: dev)",
     )
     init_parser.add_argument(

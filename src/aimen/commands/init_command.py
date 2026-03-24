@@ -139,8 +139,8 @@ def select_mode_interactive(args) -> str:
         return args.mode
 
     options = [
-        ("dev",  "Dev  - 完整开发模式"),
-        ("easy", "Easy - 简易模式"),
+        ("dev",   "Dev   - 完整开发模式"),
+        ("quick", "Quick - 极速模式（一次命令，全自动完成）"),
     ]
     return _arrow_select("⚙️  Select Work Mode", options)
 
@@ -226,7 +226,7 @@ def create_aimen_directory():
 def ensure_database_ignored() -> Path:
     """Ensure the local AIMEN database is ignored by Git."""
     gitignore_path = Path.cwd() / ".gitignore"
-    rule = ".aimen/programs.db"
+    rule = ".aimen/projects.db"
 
     if gitignore_path.exists():
         content = gitignore_path.read_text(encoding="utf-8")
