@@ -15,6 +15,8 @@
 
 - **自托管** - 完全掌控你的开发环境
 - **多代理支持** - 支持 Claude Code、OpenCode、Cursor、GitHub Copilot（Gemini、Qwen 即将支持）
+- **两种模式** - Dev 模式（完整开发流）和 Quick 模式（极速 MVP）
+- **YOLO 模式** - 全自动执行，无需逐步确认
 - **TDD 工作流** - 内置测试驱动开发流程
 - **智能任务管理** - 自动化的项目和任务追踪
 - **交互式开发** - AI 代理通过引导式问题与你沟通
@@ -33,84 +35,47 @@ uv tool install .
 
 ## 快速开始
 
-### 1. 初始化项目
+### 初始化项目
 
 ```bash
 aimen init
 ```
 
-该命令会在项目中创建对应的配置目录。你可以指定 AI 代理：
+该命令会在项目中创建对应的配置目录。你可以指定 AI 代理和模式：
 
 ```bash
-aimen init --agent claude   # Claude Code   → .claude/
-aimen init --agent opencode # OpenCode      → .opencode/
-aimen init --agent cursor   # Cursor        → .cursor/
+aimen init --agent claude   # Claude Code    → .claude/
+aimen init --agent opencode # OpenCode       → .opencode/
+aimen init --agent cursor   # Cursor         → .cursor/
 aimen init --agent copilot  # GitHub Copilot → .github/
+```
+
+```bash
+aimen init --mode dev    # Dev 模式（默认）
+aimen init --mode quick  # Quick 模式
 ```
 
 > **注意：** Gemini 和 Qwen 支持即将推出。
 
-### 2. 使用 CTO 定义需求
+## 模式
 
-使用 `cto` 命令与 AI 架构师讨论你的功能需求：
+AIMEN 提供两种工作模式，适配不同场景：
 
-```bash
-/cto "我想构建一个用户认证系统"
-```
+### Dev 模式
+适合生产级功能开发的完整工作流。
+- `/cto` 和 `/aimen` 分开调用，首先由 CTO 进行需求设计，再由 AIMEN 协调开发、测试、调试各子代理执行
+- 全程遵循严格的 TDD 原则
+- 适合对开发流程有更多昸制的场景
 
-CTO 代理会：
-- 询问澄清性问题以理解需求
-- 设计技术架构
-- 创建结构化的 Program 和 Task 定义
-- 为每个任务定义验收标准
+### Quick 模式
+适合快速构建 MVP 的极速工作流。
+- CTO 作为 AIMEN 的内置子代理运行
+- AIMEN 根据需要自动调用 CTO，减少手动切换步骤
+- 更少的操作步骤，更快的迭代速度
 
-### 3. 使用 AIMEN 执行开发
-
-需求定义完成后，使用 `aimen` 命令开始开发：
-
-```bash
-/aimen
-```
-
-AIMEN 代理会：
-- 协调专业子代理（developer、tester、debugger）
-- 遵循 TDD 原则进行实现
-- 自动运行验收脚本
-- 按需更新文档
-
-## 项目管理
-
-AIMEN 内置项目管理工具：
-
-```bash
-# 创建新项目（Program）
-aimen program init "我的功能" -t "功能描述"
-
-# 向项目添加任务
-aimen program add P-001 -n "用户登录" -t "实现登录功能" -c "用户可以使用有效凭证登录"
-
-# 查看所有项目和任务
-aimen program status
-
-# 查看特定项目
-aimen program status P-001
-
-# 设置任务编排
-aimen program orch P-001 "按顺序执行: T-001 -> T-002 -> T-003"
-
-# 更新任务状态
-aimen program update T-001 --status "🟢"
-```
-
-## 开发工作流
-
-AIMEN 遵循结构化的开发流程：
-
-1. **CTO 阶段** - 需求收集与架构设计
-2. **开发阶段** - Developer 代理按 TDD 原则实现
-3. **测试阶段** - Tester 代理创建验收脚本
-4. **调试阶段** - Debugger 代理修复问题（如需要）
-5. **文档更新** - 自动更新相关文档
+### YOLO 模式
+Dev 和 Quick 模式均支持 **YOLO 模式** —— 全自动、无需确认。
+开启 YOLO 后，AIMEN 将不再在每个步骤中待待你的确认，端到端全自动执行整个工作流。选择此模式意味着你完全信任 AI 自主完成任务。
 
 ## 代理角色
 

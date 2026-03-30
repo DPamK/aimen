@@ -15,7 +15,8 @@ That's it. No complex configuration, no steep learning curve.
 
 - **Self-hosted** - Full control over your development environment
 - **Multi-agent support** - Supports Claude Code, OpenCode, Cursor, and GitHub Copilot (Gemini & Qwen coming soon)
-- **Two modes** - Dev mode (advanced) and Quick mode (simplified workflow)
+- **Two modes** - Dev mode (full workflow) and Quick mode (rapid MVP)
+- **YOLO mode** - Fully automatic execution, no step-by-step confirmation
 - **TDD workflow** - Built-in test-driven development process
 - **Smart task management** - Automatic project and task tracking
 - **Interactive development** - AI agents communicate with you through guided questions
@@ -34,7 +35,7 @@ uv tool install .
 
 ## Quick Start
 
-### 1. Initialize Your Project
+### Initialize Your Project
 
 ```bash
 aimen init
@@ -43,79 +44,38 @@ aimen init
 This command sets up the agent directory with all necessary configuration files. You can specify an agent and mode:
 
 ```bash
-aimen init --agent claude   # Claude Code  → .claude/
-aimen init --agent opencode # OpenCode     → .opencode/
-aimen init --agent cursor   # Cursor       → .cursor/
+aimen init --agent claude   # Claude Code    → .claude/
+aimen init --agent opencode # OpenCode       → .opencode/
+aimen init --agent cursor   # Cursor         → .cursor/
 aimen init --agent copilot  # GitHub Copilot → .github/
+```
+
+```bash
+aimen init --mode dev    # Dev mode (default)
+aimen init --mode quick  # Quick mode
 ```
 
 > **Note:** Gemini and Qwen support is coming soon.
 
-### 2. Define Requirements with CTO
-
-Use the `cto` command to discuss your feature requirements with an AI architect:
-
-```bash
-/cto "I want to build a user authentication system"
-```
-
-The CTO agent will:
-- Ask clarifying questions about your requirements
-- Design the technical architecture
-- Create structured Program and Task definitions
-- Define acceptance criteria for each task
-
-### 3. Execute Development with AIMEN
-
-Once requirements are defined, use the `aimen` command to start development:
-
-```bash
-/aimen
-```
-
-The AIMEN agent will:
-- Coordinate between specialized sub-agents (developer, tester, debugger)
-- Follow TDD principles for implementation
-- Run verification scripts automatically
-- Update documentation as needed
-
-## Project Management
-
-AIMEN includes built-in project management tools:
-
-```bash
-# Create a new program (project)
-aimen program init "My Feature" -t "Feature description"
-
-# Add a task to the program
-aimen program add P-001 -n "User Login" -t "Implement login" -c "User can log in with valid credentials"
-
-# View all programs and tasks
-aimen program status
-
-# View specific program
-aimen program status P-001
-
-# Set task orchestration
-aimen program orch P-001 "Run tasks in sequence: T-001 -> T-002 -> T-003"
-
-# Update task status
-aimen program update T-001 --status "🟢"
-```
-
 ## Modes
 
-AIMEN supports two workflow modes:
+AIMEN provides two workflow modes to suit different use cases:
 
 ### Dev Mode
-- CTO is a **command** (`/cto`)
-- You manually invoke CTO for requirements, then `/aimen` for development
-- More control over the workflow
+Full development workflow designed for production-quality features.
+- Separate `/cto` and `/aimen` commands give you full control over each phase
+- CTO handles requirements design; AIMEN coordinates developer, tester, and debugger agents
+- Follows strict TDD principles throughout
 
-### Easy Mode
-- CTO is an **agent** under AIMEN's coordination
-- AIMEN automatically calls CTO when you have new requirements
-- Simplified workflow, less manual switching
+### Quick Mode
+Streamlined workflow for rapidly building an MVP.
+- CTO is integrated as an agent under AIMEN’s coordination
+- AIMEN automatically invokes CTO when requirements are needed
+- Fewer manual steps, faster iteration
+
+### YOLO Mode
+Both Dev and Quick modes support **YOLO mode** — fully automatic, no-confirmation execution.
+When YOLO is enabled, AIMEN runs the entire workflow end-to-end without pausing for your approval at each step. Choose this when you want maximum speed and trust the agent to handle everything autonomously.
 
 ## Development Workflow
 
