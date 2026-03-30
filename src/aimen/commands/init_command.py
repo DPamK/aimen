@@ -3,74 +3,13 @@
 import subprocess
 import sys
 from pathlib import Path
-from typing import Callable
 
 # Ensure stdout uses UTF-8 on Windows
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
 
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib_resources import files  # type: ignore
-
 from ..database import init_db
-
-
-# SectionHandler: (src_section_dir, tool_root_dir) -> list[Path]
-SectionHandler = Callable[[Path, Path], list[Path]]
-
-
-# ---------------------------------------------------------------------------
-# Shared helper
-# ---------------------------------------------------------------------------
-
-def _copy_section(src_dir: Path, dst_dir: Path) -> list[Path]:
-    """Copy files and subdirs from src_dir into dst_dir (default behaviour)."""
-    dst_dir.mkdir(parents=True, exist_ok=True)
-    written_files: list[Path] = []
-    for item in sorted(src_dir.iterdir()):
-        if item.is_file():
-            target = dst_dir / item.name
-            target.write_text(item.read_text(encoding="utf-8"), encoding="utf-8")
-            written_files.append(target)
-        elif item.is_dir():
-            written_files.extend(_copy_section(item, dst_dir / item.name))
-    return written_files
-
-
-# ---------------------------------------------------------------------------
-# GitHub Copilot handlers
-# ---------------------------------------------------------------------------
-
-def _copilot_agents(src: Path, root: Path) -> list[Path]:
-    dst = root / "agents"
-    dst.mkdir(parents=True, exist_ok=True)
-    written_files: list[Path] = []
-    for f in sorted(src.iterdir()):
-        if f.is_file():
-            target = dst / f"{f.stem}.agent.md"
-            target.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
-            written_files.append(target)
-    return written_files
-
-
-def _copilot_commands(src: Path, root: Path) -> list[Path]:
-    dst = root / "prompts"
-    dst.mkdir(parents=True, exist_ok=True)
-    written_files: list[Path] = []
-    for f in sorted(src.iterdir()):
-        if f.is_file():
-            target = dst / f"{f.stem}.prompt.md"
-            target.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
-            written_files.append(target)
-    return written_files
-
-
-_COPILOT_HANDLERS: dict[str, SectionHandler] = {
-    "agents":   _copilot_agents,
-    "commands": _copilot_commands,
-}
+from .agents import ClaudeInitializer, CopilotInitializer, CursorInitializer, OpenCodeInitializer
 
 # ---------------------------------------------------------------------------
 
@@ -98,9 +37,13 @@ def execute(args):
     # Create tool-specific directory
     initialized_files: list[Path] = []
     if tool == "claude":
-        initialized_files = setup_claude_code(mode)
+        initialized_files = ClaudeInitializer(mode).setup()
     elif tool == "copilot":
-        initialized_files = setup_github_copilot(mode)
+        initialized_files = CopilotInitializer(mode).setup()
+    elif tool == "opencode":
+        initialized_files = OpenCodeInitializer(mode).setup()
+    elif tool == "cursor":
+        initialized_files = CursorInitializer(mode).setup()
     else:
         print(f"暂不支持 {tool} 的自动化安装，未来可期！")
         return
@@ -151,11 +94,12 @@ def select_tool_interactive(args) -> str:
         return args.agent
 
     options = [
-        ("claude", "Claude Code"),
-        ("copilot", "GitHub Copilot"),
-        ("cursor", "Cursor"),
-        ("gemini", "Gemini"),
-        ("qwen", "Qwen"),
+        ("claude",   "Claude Code"),
+        ("opencode", "OpenCode"),
+        ("copilot",  "GitHub Copilot"),
+        ("cursor",   "Cursor"),
+        ("gemini",   "Gemini"),
+        ("qwen",     "Qwen"),
     ]
     return _arrow_select("🤖 Select AI Agent", options)
 
@@ -169,47 +113,6 @@ def _arrow_select(title: str, options: list) -> str:
     return result  # None if ESC / Ctrl-C
 
 
-
-def setup_claude_code(mode: str = "dev") -> list[Path]:
-    """Setup Claude Code directory structure."""
-    written_files = _install_template(Path.cwd() / ".claude", mode, {})
-    print("✅ Claude Code install complete!")
-    return written_files
-
-
-def setup_github_copilot(mode: str = "dev") -> list[Path]:
-    """Setup GitHub Copilot directory structure."""
-    written_files = _install_template(Path.cwd() / ".github", mode, _COPILOT_HANDLERS)
-    print("✅ GitHub Copilot install complete!")
-    return written_files
-
-
-def _install_template(target_dir: Path, mode: str, handlers: dict[str, SectionHandler]) -> list[Path]:
-    """Traverse template/<mode>/ and dispatch each section dir to its handler.
-
-    For each section directory found in the template:
-      - If a handler is registered for that section name, call it.
-      - Otherwise fall back to _copy_section (copies as-is into target_dir/<section>).
-
-    handler signature: (src_section_dir: Path, tool_root_dir: Path) -> list[Path]
-    """
-    try:
-        template_base = Path(str(files("aimen.template").joinpath(mode)))
-    except (TypeError, FileNotFoundError):
-        template_base = Path(__file__).parent.parent / "template" / mode
-
-    if not template_base.exists():
-        print(f"  ⚠️  Warning: Template not found: {template_base}")
-        return []
-
-    written_files: list[Path] = []
-    for section_dir in sorted(template_base.iterdir()):
-        if not section_dir.is_dir():
-            continue
-        handler = handlers.get(section_dir.name, lambda s, t: _copy_section(s, t / s.name))
-        written_files.extend(handler(section_dir, target_dir))
-
-    return written_files
 
 
 
