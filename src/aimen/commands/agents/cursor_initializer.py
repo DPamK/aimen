@@ -17,3 +17,8 @@ class CursorInitializer(BaseAgentInitializer):
 
     def get_success_message(self) -> str:
         return "✅ Cursor install complete!"
+
+    def get_placeholders(self) -> dict[str, str]:
+        return {
+            "{{QUESTION_TOOL}}": "Question",
+        }

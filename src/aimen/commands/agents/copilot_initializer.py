@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from .base import BaseAgentInitializer, _copy_files
+from .base import BaseAgentInitializer
 
 
 class CopilotInitializer(BaseAgentInitializer):
@@ -20,6 +20,11 @@ class CopilotInitializer(BaseAgentInitializer):
     def get_success_message(self) -> str:
         return "✅ GitHub Copilot install complete!"
 
+    def get_placeholders(self) -> dict[str, str]:
+        return {
+            "{{QUESTION_TOOL}}": "vscode_askQuestions",
+        }
+
     def setup_agents(self, src: Path, target: Path) -> list[Path]:
         """Install agents, renaming each file to <stem>.agent.md."""
         dst = target / "agents"
@@ -28,7 +33,7 @@ class CopilotInitializer(BaseAgentInitializer):
         for f in sorted(src.iterdir()):
             if f.is_file():
                 out = dst / f"{f.stem}.agent.md"
-                out.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
+                out.write_text(self._apply_placeholders(f.read_text(encoding="utf-8")), encoding="utf-8")
                 written_files.append(out)
         return written_files
 
@@ -40,6 +45,6 @@ class CopilotInitializer(BaseAgentInitializer):
         for f in sorted(src.iterdir()):
             if f.is_file():
                 out = dst / f"{f.stem}.prompt.md"
-                out.write_text(f.read_text(encoding="utf-8"), encoding="utf-8")
+                out.write_text(self._apply_placeholders(f.read_text(encoding="utf-8")), encoding="utf-8")
                 written_files.append(out)
         return written_files

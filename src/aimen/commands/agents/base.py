@@ -49,7 +49,35 @@ class BaseAgentInitializer(ABC):
     def get_success_message(self) -> str:
         """Return the success message printed after installation."""
         return "✅ Installation complete!"
+    def get_placeholders(self) -> dict[str, str]:
+        """Return placeholder substitutions applied to all installed files.
 
+        Keys are placeholder strings in the template (e.g. ``{{QUESTION_TOOL}}``);
+        values are the tool-specific replacements.
+
+        Override in subclasses to define tool-specific values.
+        """
+        return {}
+
+    def _apply_placeholders(self, content: str) -> str:
+        """Replace all placeholders in *content* and return the result."""
+        for placeholder, value in self.get_placeholders().items():
+            content = content.replace(placeholder, value)
+        return content
+
+    def _install_files(self, src_dir: Path, dst_dir: Path) -> list[Path]:
+        """Recursively copy files from src_dir into dst_dir, applying placeholder substitutions."""
+        dst_dir.mkdir(parents=True, exist_ok=True)
+        written_files: list[Path] = []
+        for item in sorted(src_dir.iterdir()):
+            if item.is_file():
+                target = dst_dir / item.name
+                content = self._apply_placeholders(item.read_text(encoding="utf-8"))
+                target.write_text(content, encoding="utf-8")
+                written_files.append(target)
+            elif item.is_dir():
+                written_files.extend(self._install_files(item, dst_dir / item.name))
+        return written_files
     # ------------------------------------------------------------------
     # Section methods — override in subclasses to customise behaviour
     # ------------------------------------------------------------------
@@ -63,7 +91,7 @@ class BaseAgentInitializer(ABC):
             src:    Source agents directory from the template.
             target: Target root directory returned by get_target_dir().
         """
-        return _copy_files(src, target / "agents")
+        return self._install_files(src, target / "agents")
 
     def setup_commands(self, src: Path, target: Path) -> list[Path]:
         """Install the commands section.
@@ -74,7 +102,7 @@ class BaseAgentInitializer(ABC):
             src:    Source commands directory from the template.
             target: Target root directory returned by get_target_dir().
         """
-        return _copy_files(src, target / "commands")
+        return self._install_files(src, target / "commands")
 
     def setup_skills(self, src: Path, target: Path) -> list[Path]:
         """Install the skills section.
@@ -85,7 +113,7 @@ class BaseAgentInitializer(ABC):
             src:    Source skills directory from the template.
             target: Target root directory returned by get_target_dir().
         """
-        return _copy_files(src, target / "skills")
+        return self._install_files(src, target / "skills")
 
     # ------------------------------------------------------------------
     # Orchestration
