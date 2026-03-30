@@ -14,8 +14,8 @@ That's it. No complex configuration, no steep learning curve.
 ## Features
 
 - **Self-hosted** - Full control over your development environment
-- **Claude Code support** - Currently supports Claude Code (more AI agents coming soon)
-- **Two modes** - Dev mode (advanced) and Easy mode (simplified workflow)
+- **Multi-agent support** - Supports Claude Code, OpenCode, Cursor, and GitHub Copilot (Gemini & Qwen coming soon)
+- **Two modes** - Dev mode (advanced) and Quick mode (simplified workflow)
 - **TDD workflow** - Built-in test-driven development process
 - **Smart task management** - Automatic project and task tracking
 - **Interactive development** - AI agents communicate with you through guided questions
@@ -40,14 +40,16 @@ uv tool install .
 aimen init
 ```
 
-This command sets up the `.claude/` directory with all necessary configuration files. You can optionally specify a mode:
+This command sets up the agent directory with all necessary configuration files. You can specify an agent and mode:
 
 ```bash
-aimen init --mode dev    # Dev mode (default) - full development workflow
-aimen init --mode easy   # Easy mode - simplified workflow with CTO as agent
+aimen init --agent claude   # Claude Code  → .claude/
+aimen init --agent opencode # OpenCode     → .opencode/
+aimen init --agent cursor   # Cursor       → .cursor/
+aimen init --agent copilot  # GitHub Copilot → .github/
 ```
 
-> **Note:** Currently only Claude Code is supported. Support for Cursor, Copilot, Gemini, and Qwen is coming soon.
+> **Note:** Gemini and Qwen support is coming soon.
 
 ### 2. Define Requirements with CTO
 

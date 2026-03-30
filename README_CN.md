@@ -14,7 +14,7 @@
 ## 特性
 
 - **自托管** - 完全掌控你的开发环境
-- **多代理支持** - 支持 Claude、Cursor、Copilot、Gemini、Qwen（未来支持）
+- **多代理支持** - 支持 Claude Code、OpenCode、Cursor、GitHub Copilot（Gemini、Qwen 即将支持）
 - **TDD 工作流** - 内置测试驱动开发流程
 - **智能任务管理** - 自动化的项目和任务追踪
 - **交互式开发** - AI 代理通过引导式问题与你沟通
@@ -39,11 +39,16 @@ uv tool install .
 aimen init
 ```
 
-该命令会在项目中创建 `.aimen/` 目录及必要的配置文件。你可以指定 AI 代理：
+该命令会在项目中创建对应的配置目录。你可以指定 AI 代理：
 
 ```bash
-aimen init --agent claude  # 可选: claude, cursor, copilot, gemini, qwen
+aimen init --agent claude   # Claude Code   → .claude/
+aimen init --agent opencode # OpenCode      → .opencode/
+aimen init --agent cursor   # Cursor        → .cursor/
+aimen init --agent copilot  # GitHub Copilot → .github/
 ```
+
+> **注意：** Gemini 和 Qwen 支持即将推出。
 
 ### 2. 使用 CTO 定义需求
 
