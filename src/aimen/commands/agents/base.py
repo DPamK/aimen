@@ -29,6 +29,8 @@ _SECTION_METHODS = {
     "skills":   "setup_skills",
 }
 
+_AGENT_INSTRUCTION_FILES = {"agent.md", "agents.md", "AGENTS.md"}
+
 
 class BaseAgentInitializer(ABC):
     """Base class for initializing AI agent environments.
@@ -115,6 +117,23 @@ class BaseAgentInitializer(ABC):
         """
         return self._install_files(src, target / "skills")
 
+    def setup_agent(self, src: Path, target: Path) -> list[Path]:
+        """Install the project-level agent instruction file.
+
+        Default behaviour: copy agent.md/agents.md into target/AGENTS.md.
+        Subclasses may override this when their tool expects a different
+        instruction filename or location.
+
+        Args:
+            src:    Source project instruction file from the template.
+            target: Target root directory returned by get_target_dir().
+        """
+        dst = target / "AGENTS.md"
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        content = self._apply_placeholders(src.read_text(encoding="utf-8"))
+        dst.write_text(content, encoding="utf-8")
+        return [dst]
+
     # ------------------------------------------------------------------
     # Orchestration
     # ------------------------------------------------------------------
@@ -130,6 +149,10 @@ class BaseAgentInitializer(ABC):
         written_files: list[Path] = []
 
         for section_dir in sorted(template_base.iterdir()):
+            if section_dir.is_file() and section_dir.name.lower() in _AGENT_INSTRUCTION_FILES:
+                written_files.extend(self.setup_agent(section_dir, target_dir))
+                continue
+
             if not section_dir.is_dir():
                 continue
             method_name = _SECTION_METHODS.get(section_dir.name)

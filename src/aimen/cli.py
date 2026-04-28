@@ -23,7 +23,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
     init_parser.add_argument(
         "--agent",
-        choices=["claude", "cursor", "copilot", "gemini", "qwen"],
+        choices=["claude", "cursor", "copilot", "opencode", "codex", "gemini", "qwen"],
         help="AI agent to use (default: claude)",
     )
 

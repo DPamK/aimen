@@ -25,6 +25,12 @@ class CopilotInitializer(BaseAgentInitializer):
             "{{QUESTION_TOOL}}": "vscode_askQuestions",
         }
 
+    def setup_agent(self, src: Path, target: Path) -> list[Path]:
+        dst = target / "copilot-instructions.md"
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_text(self._apply_placeholders(src.read_text(encoding="utf-8")), encoding="utf-8")
+        return [dst]
+
     def setup_agents(self, src: Path, target: Path) -> list[Path]:
         """Install agents, renaming each file to <stem>.agent.md."""
         dst = target / "agents"

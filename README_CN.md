@@ -14,7 +14,7 @@
 ## 特性
 
 - **自托管** - 完全掌控你的开发环境
-- **多代理支持** - 支持 Claude Code、OpenCode、Cursor、GitHub Copilot（Gemini、Qwen 即将支持）
+- **多代理支持** - 支持 Claude Code、OpenCode、Cursor、GitHub Copilot 和 OpenAI Codex（Gemini、Qwen 即将支持）
 - **两种模式** - Dev 模式（完整开发流）和 Quick 模式（极速 MVP）
 - **YOLO 模式** - 全自动执行，无需逐步确认
 - **TDD 工作流** - 内置测试驱动开发流程
@@ -48,6 +48,7 @@ aimen init --agent claude   # Claude Code    → .claude/
 aimen init --agent opencode # OpenCode       → .opencode/
 aimen init --agent cursor   # Cursor         → .cursor/
 aimen init --agent copilot  # GitHub Copilot → .github/
+aimen init --agent codex    # OpenAI Codex   → AGENTS.md, .codex/, .agents/
 ```
 
 ```bash
@@ -56,6 +57,18 @@ aimen init --mode quick  # Quick 模式
 ```
 
 > **注意：** Gemini 和 Qwen 支持即将推出。
+
+### 生成的代理文件
+
+AIMEN 会从模板中的 `AGENTS.md` 安装项目级指令文件，并根据不同 Agent 工具调整落点：
+
+| Agent | 项目级指令 | Agents | Commands / Skills |
+|-------|------------|--------|-------------------|
+| Claude Code | `CLAUDE.md` | `.claude/agents/` | `.claude/commands/` |
+| OpenCode | `AGENTS.md` | `.opencode/agents/` | `.opencode/commands/` |
+| Cursor | `AGENTS.md` | `.cursor/agents/` | `.cursor/commands/` |
+| GitHub Copilot | `.github/copilot-instructions.md` | `.github/agents/*.agent.md` | `.github/prompts/*.prompt.md` |
+| OpenAI Codex | `AGENTS.md` | `.codex/agents/*.toml` | `.agents/skills/*/SKILL.md` |
 
 ## 模式
 
@@ -98,4 +111,3 @@ Dev 和 Quick 模式均支持 **YOLO 模式** —— 全自动、无需确认。
 └── verify/            # 验收脚本
     └── verify_*.py
 ```
-

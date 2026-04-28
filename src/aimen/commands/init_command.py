@@ -9,7 +9,7 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
 
 from ..database import init_db
-from .agents import ClaudeInitializer, CopilotInitializer, CursorInitializer, OpenCodeInitializer
+from .agents import ClaudeInitializer, CodexInitializer, CopilotInitializer, CursorInitializer, OpenCodeInitializer
 
 # ---------------------------------------------------------------------------
 
@@ -44,6 +44,8 @@ def execute(args):
         initialized_files = OpenCodeInitializer(mode).setup()
     elif tool == "cursor":
         initialized_files = CursorInitializer(mode).setup()
+    elif tool == "codex":
+        initialized_files = CodexInitializer(mode).setup()
     else:
         print(f"暂不支持 {tool} 的自动化安装，未来可期！")
         return
@@ -98,6 +100,7 @@ def select_tool_interactive(args) -> str:
         ("opencode", "OpenCode"),
         ("copilot",  "GitHub Copilot"),
         ("cursor",   "Cursor"),
+        ("codex",    "OpenAI Codex"),
         ("gemini",   "Gemini"),
         ("qwen",     "Qwen"),
     ]

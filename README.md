@@ -14,7 +14,7 @@ That's it. No complex configuration, no steep learning curve.
 ## Features
 
 - **Self-hosted** - Full control over your development environment
-- **Multi-agent support** - Supports Claude Code, OpenCode, Cursor, and GitHub Copilot (Gemini & Qwen coming soon)
+- **Multi-agent support** - Supports Claude Code, OpenCode, Cursor, GitHub Copilot, and OpenAI Codex (Gemini & Qwen coming soon)
 - **Two modes** - Dev mode (full workflow) and Quick mode (rapid MVP)
 - **YOLO mode** - Fully automatic execution, no step-by-step confirmation
 - **TDD workflow** - Built-in test-driven development process
@@ -48,6 +48,7 @@ aimen init --agent claude   # Claude Code    → .claude/
 aimen init --agent opencode # OpenCode       → .opencode/
 aimen init --agent cursor   # Cursor         → .cursor/
 aimen init --agent copilot  # GitHub Copilot → .github/
+aimen init --agent codex    # OpenAI Codex   → AGENTS.md, .codex/, .agents/
 ```
 
 ```bash
@@ -56,6 +57,18 @@ aimen init --mode quick  # Quick mode
 ```
 
 > **Note:** Gemini and Qwen support is coming soon.
+
+### Generated Agent Files
+
+AIMEN installs a project-level instruction file from the template `AGENTS.md` and adapts it to each agent tool:
+
+| Agent | Project instructions | Agents | Commands / Skills |
+|-------|----------------------|--------|-------------------|
+| Claude Code | `CLAUDE.md` | `.claude/agents/` | `.claude/commands/` |
+| OpenCode | `AGENTS.md` | `.opencode/agents/` | `.opencode/commands/` |
+| Cursor | `AGENTS.md` | `.cursor/agents/` | `.cursor/commands/` |
+| GitHub Copilot | `.github/copilot-instructions.md` | `.github/agents/*.agent.md` | `.github/prompts/*.prompt.md` |
+| OpenAI Codex | `AGENTS.md` | `.codex/agents/*.toml` | `.agents/skills/*/SKILL.md` |
 
 ## Modes
 
@@ -108,4 +121,3 @@ AIMEN follows a structured development process:
 └── verify/            # Verification scripts
     └── verify_*.py
 ```
-

@@ -22,3 +22,8 @@ class ClaudeInitializer(BaseAgentInitializer):
         return {
             "{{QUESTION_TOOL}}": "Question",
         }
+
+    def setup_agent(self, src: Path, target: Path) -> list[Path]:
+        dst = Path.cwd() / "CLAUDE.md"
+        dst.write_text(self._apply_placeholders(src.read_text(encoding="utf-8")), encoding="utf-8")
+        return [dst]
